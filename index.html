@@ -15,7 +15,7 @@
       #messages > li:nth-child(odd) { background: rgb(255, 214, 228); }
       #notendur {list-style-type: none; padding-left: 5px;}
       #header{ position: absolute; top: 0px; right: 40px; padding-top: 0px; padding-right: 10px;}
-      #users{ background-color: rgba(202, 202, 202, 0.61); position: absolute; right: 0px; top: -0px; bottom: 48px; padding: 10px; height: flex;}
+      #users{ background-color: rgba(202, 202, 202, 0.61); position: fixed; right: 0px; top: -0px; bottom: 48px; padding: 10px; height: flex;}
         
     </style>
     <script
@@ -67,7 +67,16 @@
         };
       });
 
-      socket.on('chat message', function(msg,) {
+      socket.on('previous chat',(result)=>{
+        for(let i=0;i<result.length;i++){
+          var item = document.createElement('li');
+          item.textContent=result[i].user + ' skrifaði: ' + result[i].msg;
+          messages.appendChild(item);
+         
+        };
+      });
+
+      socket.on('chat message', function(msg) {
         var item = document.createElement('li');
         item.textContent = msg;
         messages.appendChild(item);

@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
-const { Server } = require('socket.io');
+const { Server, Socket } = require('socket.io');
 const io = new Server(server);
 const bodyParser = require('body-parser');
 var listi=[];
@@ -27,15 +27,17 @@ app.get('/Password',(req,res)=>{
 app.get('/*',(req,res) =>{
     res.sendFile(__dirname+'/adgangur_ohemill.html');
 });
-mongo.connect('mongodb://127.0.0.1/skilaverkefni4', {useUnifiedTopology: true}, function(err, db) {
+mongo.connect('mongodb://127.0.0.1/skilaverkefni_4', {useUnifiedTopology: true}, function(err, db) {
 	if (err) {
 		throw err;
 	}
-	var chatdb = db.db("skilaverkefni4");
+	var chatdb = db.db("skilaverkefni_4");
+    
 
     io.on('connection',(socket)=>{
+        
         socket.on('join', (name)=>{
-            dulnefni=['Anonymouse Dinasaur','Anonymous Axolotl','Anonymous Kiwi','Anonymous Quokka','Anonymouse Wombat','Anonymouse Blobfish','Anonymouse Dragon'];
+            dulnefni=['Anonymous Dinasaur','Anonymous Axolotl','Anonymous Kiwi','Anonymous Quokka','Anonymous Wombat','Anonymous Blobfish','Anonymous Dragon'];
             if (!name){
                 socket.userName=dulnefni[Math.floor(Math.random()*7)];
             } else {
@@ -44,6 +46,11 @@ mongo.connect('mongodb://127.0.0.1/skilaverkefni4', {useUnifiedTopology: true}, 
             listi.push(socket.userName)
             io.emit('innskráðir breyttust',listi);
             io.emit('chat message',socket.userName+' has joined the chat.'); 
+
+          chatdb.collection("messages").find({}).toArray(function(err,result){
+            if(err) throw err;
+            socket.emit('previous chat',result); 
+        });  
         });
         
         socket.on('disconnect',()=>{
@@ -56,14 +63,13 @@ mongo.connect('mongodb://127.0.0.1/skilaverkefni4', {useUnifiedTopology: true}, 
             
             };
             io.emit('innskráðir breyttust',listi);    
-            io.emit('chat message', socket.userName+' has left the chat.')
-            // io.emit('chat message',name+' has left the chat'); 
+            io.emit('chat message', socket.userName+' has left the chat.');
         });
         socket.on('user_typing',()=>{
             io.emit('user_typing',socket.userName);
         });
         socket.on('chat message', (msg)=>{
-            chatdb.collection("messages").insertOne({msg:socket.userName+' wrote: '+msg});
+            chatdb.collection("messages").insertOne({user:socket.userName,msg:msg});
             io.emit('chat message',socket.userName+": "+msg);
         });
     });
@@ -71,6 +77,6 @@ mongo.connect('mongodb://127.0.0.1/skilaverkefni4', {useUnifiedTopology: true}, 
 
 
 server.listen(8080, () => {
-    console.log('listening on *:3000');
+    console.log('listening on *:8080');
 });
 
