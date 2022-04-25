@@ -70,7 +70,7 @@
       socket.on('previous chat',(result)=>{
         for(let i=0;i<result.length;i++){
           var item = document.createElement('li');
-          item.textContent=result[i].user + ' skrifaði: ' + result[i].msg;
+          item.textContent=result[i].user + ' wrote: ' + result[i].msg;
           messages.appendChild(item);
          
         };
