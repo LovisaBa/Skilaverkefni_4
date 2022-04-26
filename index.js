@@ -1,34 +1,15 @@
-// const express = require('express');
+
 const app = require('express')();
 const http = require('http');
 const server = http.createServer(app);
 const { Server, Socket } = require('socket.io');
 const io = new Server(server);
 const router = require('./routes/index');
-// const bodyParser = require('body-parser');
 var listi=[];
 
 const mongo = require('mongodb').MongoClient;
 app.use('/', router);
 
-// app.use(bodyParser.urlencoded({ extended: false }));
-
-// app.get('/', (req, res) => {
-//     res.sendFile(__dirname + '/login.html');
-// });
-
-// app.post('/', (req,res)=>{
-//     var password=req.body.password;
-//     res.redirect('/'+password);
-// });
-
-// app.get('/Password',(req,res)=>{
-//     res.sendFile(__dirname+'/index.html');
-// });
-
-// app.get('/*',(req,res) =>{
-//     res.sendFile(__dirname+'/adgangur_ohemill.html');
-// });
 mongo.connect('mongodb://127.0.0.1/skilaverkefni_4', {useUnifiedTopology: true}, function(err, db) {
 	if (err) {
 		throw err;
