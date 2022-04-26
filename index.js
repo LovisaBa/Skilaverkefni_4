@@ -56,16 +56,12 @@ mongo.connect('mongodb://127.0.0.1/skilaverkefni_4', {useUnifiedTopology: true},
         
         socket.on('disconnect',()=>{
             for( var i = 0; i < listi.length; i++){ 
-        
                 if ( listi[i] === socket.userName) { 
-            
                     listi.splice(i, 1); 
                 }
-            
             };
             io.emit('innskráðir breyttust',listi);    
             io.emit('chat message', socket.userName+' has left the chat.');
-            // Kemur undefined has the left the chat þegar anonumous fer. ATH
         });
         socket.on('user_typing',()=>{
             io.emit('user_typing',socket.userName);
